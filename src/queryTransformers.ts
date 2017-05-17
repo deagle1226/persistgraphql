@@ -60,7 +60,8 @@ function addTypenameToSelectionSet(
 }
 
 export const addTypenameTransformer: QueryTransformer = (doc: DocumentNode) => {
-  const docClone = cloneDeep(doc);
+  //const docClone = cloneDeep(doc); // RangeError: Maximum call stack size exceeded
+  const docClone = JSON.parse(JSON.stringify(doc));
 
   docClone.definitions.forEach((definition: DefinitionNode) => {
     const isRoot = definition.kind === 'OperationDefinition';

@@ -174,10 +174,10 @@ export class ExtractGQL {
 
   public resolveGraphQLImports(dependantPath: string, graphQLString: string, fragmentPaths: string[] = []): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      const imports = this.identifyImports(dependantPath, graphQLString)
-      const importsToFetch = _.difference(imports, fragmentPaths)
+      const imports = this.identifyImports(dependantPath, graphQLString);
+      const importsToFetch = _.difference(imports, fragmentPaths);
       if (importsToFetch.length > 0) {
-        const promises = importsToFetch.map(filePath => this.followImport(filePath, _.concat(fragmentPaths, importsToFetch)))
+        const promises = importsToFetch.map(filePath => this.followImport(filePath, _.concat(fragmentPaths, importsToFetch)));
         Promise.all(promises).then((fragmentStrings: string[]) => {
           resolve(`
 ${graphQLString}
@@ -185,36 +185,36 @@ ${fragmentStrings.reduce((x, y) => x + y)}
           `);
         });
       } else {
-        resolve(graphQLString)
+        resolve(graphQLString);
       }
     })
   }
 
   public identifyImports(dependantPath: string, document: string): string[] {
-    const lines = document.split('\n')
-    const imports: string[] = []
+    const lines = document.split('\n');
+    const imports: string[] = [];
     lines.some(line => {
       if (line[0] === '#' && line.slice(1).split(' ')[0] === 'import') {
-        const relativeImport = line.slice(1).split(' ')[1].replace(/"/g, '')
+        const relativeImport = line.slice(1).split(' ')[1].replace(/"/g, '');
         if (_.startsWith(relativeImport, '.')) {
-            imports.push(path.resolve(path.dirname(dependantPath), relativeImport))
+            imports.push(path.resolve(path.dirname(dependantPath), relativeImport));
         } else {
             try {
-                imports.push(require.resolve(relativeImport))
+                imports.push(require.resolve(relativeImport));
             } catch(err) {
-                console.log(err)
+                console.log(err);
             }
         }
       }
       return (line.length !== 0 && line[0] !== '#');
     })
-    return imports
+    return imports;
   }
 
   public followImport(absolutePath: string, fragmentPaths: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
       ExtractGQL.readFile(absolutePath).then(fileContents => {
-        resolve(this.resolveGraphQLImports(absolutePath, fileContents, fragmentPaths))
+        resolve(this.resolveGraphQLImports(absolutePath, fileContents, fragmentPaths));
       })
     })
   }
