@@ -1,0 +1,6 @@
+#import "./fragment_a.graphql"
+
+fragment listItem on ListItem {
+    id
+    text { ...styledText }
+}

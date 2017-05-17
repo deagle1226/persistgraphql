@@ -1,0 +1,4 @@
+fragment styledText on StyledText {
+    style
+    copy
+}

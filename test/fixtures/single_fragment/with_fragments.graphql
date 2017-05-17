@@ -1,0 +1,9 @@
+#import "./fragment_a.graphql"
+#import "./fragment_b.graphql"
+
+query getLists {
+    lists {
+        header { ...styledText }
+        items { ...listItem }
+    }
+}

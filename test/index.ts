@@ -27,6 +27,38 @@ import {
 import gql from 'graphql-tag';
 
 describe('ExtractGQL', () => {
+
+  it('should import GraphQL files', (done) => {
+    const inputFilePath = 'test/fixtures/single_fragment/with_fragment.graphql';
+    const myegql = new ExtractGQL({ inputFilePath: 'empty' });
+    myegql.processGraphQLFile(inputFilePath).then((result) => {
+      const query = gql`
+        query {
+          author {
+            ...details
+          }
+        }
+
+        fragment details on Author {
+          firstName
+          lastName
+        }
+      `
+      const map = myegql.createMapFromDocument(query)
+      assert.equal(Object.keys(result)[0], Object.keys(map)[0])
+      done();
+    });
+  })
+
+  it('should import GraphQL files recursivly', (done) => {
+    const inputFilePath = 'test/fixtures/single_fragment/with_fragments.graphql';
+    const myegql = new ExtractGQL({ inputFilePath: 'empty' });
+    myegql.processGraphQLFile(inputFilePath).then((result) => {
+      console.log(result)
+      done();
+    });
+  })
+
   const queries = gql`
     query {
       author {
