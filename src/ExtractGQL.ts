@@ -196,8 +196,15 @@ ${fragmentStrings.reduce((x, y) => x + y)}
     lines.some(line => {
       if (line[0] === '#' && line.slice(1).split(' ')[0] === 'import') {
         const relativeImport = line.slice(1).split(' ')[1].replace(/"/g, '')
-        const absoluteImport = path.resolve(path.dirname(dependantPath), relativeImport)
-        imports.push(absoluteImport)
+        if (_.startsWith(relativeImport, '.')) {
+            imports.push(path.resolve(path.dirname(dependantPath), relativeImport))
+        } else {
+            try {
+                imports.push(require.resolve(relativeImport))
+            } catch(err) {
+                console.log(err)
+            }
+        }
       }
       return (line.length !== 0 && line[0] !== '#');
     })
@@ -226,7 +233,11 @@ ${fragmentStrings.reduce((x, y) => x + y)}
   }
 
   public readGraphQLFile(graphQLFile: string): Promise<string> {
-    return ExtractGQL.readFile(graphQLFile);
+    return new Promise(resolve => {
+        ExtractGQL.readFile(graphQLFile).then(fileContents => {
+            resolve(this.resolveGraphQLImports(graphQLFile, fileContents))
+        })
+    })
   }
 
   public readInputFile(inputFile: string): Promise<string> {

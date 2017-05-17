@@ -51,7 +51,7 @@ describe('ExtractGQL', () => {
   })
 
   it('should import GraphQL files recursivly', (done) => {
-    const inputFilePath = 'test/fixtures/single_fragment/with_fragments.graphql';
+    const inputFilePath = 'test/fixtures/multiple_fragments/with_fragments.graphql';
     const myegql = new ExtractGQL({ inputFilePath: 'empty' });
     myegql.processGraphQLFile(inputFilePath).then((result) => {
       console.log(result)
