@@ -151,6 +151,10 @@ export class ExtractGQL {
     queryDefinitions.forEach((transformedDefinition) => {
       const transformedQueryWithFragments = this.getQueryFragments(transformedDocument, transformedDefinition);
       transformedQueryWithFragments.definitions.unshift(transformedDefinition);
+      transformedQueryWithFragments.definitions = transformedQueryWithFragments.definitions
+          .sort((a: FragmentDefinitionNode, b: FragmentDefinitionNode) => (
+              a.kind < b.kind ? 1 : ( a.kind > b.kind || a.name.value > b.name.value ? -1 : 1)
+          ))
       const docQueryKey = this.getQueryDocumentKey(transformedQueryWithFragments);
       result[docQueryKey] = this.getQueryId();
     });
